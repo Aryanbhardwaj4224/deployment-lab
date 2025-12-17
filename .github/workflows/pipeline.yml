@@ -1,0 +1,36 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout the code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # 2. Set up Node.js environment
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    # 3. Install dependencies
+    - name: Install Dependencies
+      run: npm install
+
+    # 4. Build Docker Image (Test if Dockerfile is valid)
+    - name: Build Docker Image
+      run: docker build . --file Dockerfile --tag my-app:$(date +%s)
+      
+    # 5. Run the Shell Script (Test if automation script works)
+    - name: Test Shell Script
+      run: |
+        chmod +x deploy.sh
+        ./deploy.sh
